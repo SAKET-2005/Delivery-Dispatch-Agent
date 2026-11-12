@@ -1,108 +1,197 @@
-# SRM Agentic AI Hackathon: Starter Template
+# RouteWise — AI-Powered Delivery Dispatch Agent
 
-This is the starting point for every team. It already has the setup done, so you can spend your time on your problem statement.
+> **SRM Agentic AI Hackathon** | **Problem Statement PS7**  
+> Autonomous logistics dispatch assistant for **Anitha V** (Dispatcher ID: `D01`), Chennai Delivery Hub.
 
-**Stack:** Next.js (App Router) · React · TypeScript · Tailwind CSS · Supabase PostgreSQL · Google Gemini API (function calling) · Zod · Vercel
+---
 
-## What is already working
+## Overview
 
-- A passcode login that protects your app and your Gemini quota
-- A Supabase connection (server side only)
-- A Gemini agent loop with function calling: Gemini picks a tool, Zod checks the arguments, your code runs it, and the result goes back to Gemini
-- 3 example tools on a `tasks` table: `listTasks` (reads), `createTask` (writes) and `completeTask` (writes)
-- A chat screen that shows every tool the agent used
-- An example REST API (`/api/tasks`) and a live data list
-- Seed data for all 6 problem statements in `seed/`
+RouteWise replaces manual spreadsheet-based delivery coordination with an autonomous AI dispatch agent. Powered by Google Gemini with native function calling and backed by Supabase PostgreSQL, the agent validates business rules, evaluates rider capacity, assigns pending parcels, and reschedules failed deliveries with full auditability.
 
-## Setup (about 30 minutes)
+Every action performed by RouteWise executes real database queries and stored procedures—never simulated text.
 
-1. **Create your team repo.** Click **Use this template** on GitHub and name it `team-<number>-ps<number>`.
-2. **Install.** Run `git clone <your repo>`, `cd` into it, and run `npm install`. You need Node.js 20 or later.
-3. **Create the database.** Create a project on [supabase.com](https://supabase.com). In **SQL Editor**, run `seed/00_starter_example.sql`, then the seed file for your problem.
-4. **Get the keys.**
-   - Supabase **Project Settings**: copy the Project URL and the secret (service_role) key
-   - [Google AI Studio](https://aistudio.google.com): click **Get API key**
-5. **Create `.env.local`.** Copy `.env.example` to `.env.local` and fill in all the values.
-6. **Run it.** Run `npm run dev`, open http://localhost:3000, enter your passcode and try a sample prompt.
-7. **Deploy.** On [vercel.com](https://vercel.com), import the repo, add the same environment variables, and deploy.
+---
 
-To check your settings, open `/api/health`. It shows which variables are missing (never their values).
+## Tech Stack
 
-## Folder guide
+- **Framework:** Next.js 16 (App Router)
+- **UI & Components:** React 19, Tailwind CSS v4
+- **Language:** TypeScript (Strict Mode)
+- **Database:** Supabase PostgreSQL with Row Level Security (RLS)
+- **AI SDK:** Google Gen AI SDK (`@google/genai` v3)
+- **AI Model:** Google Gemini (`gemini-2.5-flash`)
+- **Agent Pattern:** Gemini Native Function Calling with Multi-Round Tool Loop (Max 5 Rounds)
+- **Schema Validation:** Zod v4 (runtime argument checking)
+- **Security:** Passcode-gated cookie authentication with SHA-256 session hashing
+
+---
+
+## Core Capabilities & Features
+
+### 1. AI Dispatch Assistant (`/dispatch`)
+- Conversational command interface powered by Gemini 2.5 Flash.
+- **Autonomous Tool Selection:** Gemini decides when and which tools to call without hardcoded keyword rules.
+- **Sequential Multi-Round Execution:** Chained queries and writes up to 5 rounds (e.g. query pending → find riders → check capacity → assign).
+- **Interactive Tool Activity Panel:** Live drawer inspecting tool arguments, execution status, and raw database responses.
+- Pre-populated test scenario quick buttons.
+
+### 2. Operational Dashboard (`/dashboard`)
+- Real-time KPI summary: Today's Total, Pending, Assigned, Out for Delivery, Delivered, and Failed counts.
+- Zone-by-zone pending distribution across Chennai (Velachery, Adyar, Anna Nagar, T Nagar, Tambaram).
+- Operational fleet metrics: Active riders on shift, delivery success rate progress bar.
+
+### 3. Deliveries Board (`/deliveries`)
+- Complete delivery inventory with status tabs (`All`, `Pending`, `Assigned`, `Out for Delivery`, `Delivered`, `Failed`).
+- Filtering by delivery date and zone.
+- Visual status badges, priority levels (`low`, `medium`, `high`, `urgent`), customer addresses, and attempt counters.
+
+### 4. Riders Management (`/riders`)
+- Active fleet roster with contact details, vehicle type icons (`bike`, `scooter`, `van`), and home zone.
+- Real-time **Capacity Bars** showing active workload vs max capacity (color-coded thresholds: green < 50%, yellow 50-80%, red > 80%).
+- Shift schedule indicators for the current date.
+
+### 5. Activity Audit Log (`/activity`)
+- Persistent chronological record of all dispatcher interactions and tool executions stored locally.
+- Detailed trace of tool parameters, database outcomes, and final agent responses.
+
+---
+
+## The 6 Agent Tools
+
+All tools are declared in `lib/agent/tools.ts`, validated with Zod, and converted to Gemini function declarations via `lib/agent/defineTool.ts`.
+
+| # | Tool Name | Mode | Description |
+|---|---|---|---|
+| 1 | `getPendingDeliveries` | Read | Retrieves pending deliveries for a given zone, date, or time window (`morning`, `afternoon`, `evening`). |
+| 2 | `getAvailableRiders` | Read | Returns active riders scheduled on a given date with current workload vs max capacity. |
+| 3 | `getRiderLoad` | Read | Returns granular workload breakdown and capacity headroom for a specific rider. |
+| 4 | `assignDelivery` | Write | Assigns a pending delivery to a rider via PostgreSQL function `assign_delivery(bigint, text)`. |
+| 5 | `rescheduleDelivery` | Write | Reschedules a failed delivery to a new date/window via `reschedule_delivery(bigint, date, text)`. |
+| 6 | `getFailedDeliveries` | Read | Lists failed deliveries with attempt history and marks whether they can be rescheduled (`attempts < 3`). |
+
+---
+
+## Business Rules Enforced in PostgreSQL
+
+RouteWise enforces business constraints directly in the database (`seed/ps7_delivery_dispatch.sql`) so the agent cannot violate logistics policies:
+
+1. **Zone Matching:** A rider can only accept deliveries in their home zone (`rider.home_zone == delivery.zone_id`).
+2. **Shift Verification:** A rider must have an active shift on the scheduled delivery date in `rider_shifts`.
+3. **Capacity Ceiling:** Active deliveries (`assigned` + `out_for_delivery`) cannot exceed the rider's `capacity`.
+4. **Pending Requirement:** Only deliveries with `pending` status can be assigned.
+5. **Attempt Ceiling:** Deliveries with 3 failed attempts cannot be rescheduled; must be marked returned.
+6. **Reschedule Restriction:** Only deliveries with `failed` status can be rescheduled.
+
+---
+
+## Project Structure
 
 ```
-app/
-  page.tsx               Home page: agent chat + data list   <- change
-  login/page.tsx         Passcode page
-  api/agent/route.ts     POST /api/agent: runs the agent
-  api/tasks/route.ts     Example REST API                    <- copy for your tables
-  api/health/route.ts    Shows which settings are missing
-components/
-  AgentChat.tsx          Chat UI that shows tool calls       <- change the sample prompts
-  TaskList.tsx           Example data list                   <- replace with your data
-lib/
-  agent/tools.ts         THE AGENT TOOLS                     <- your main work
-  agent/systemPrompt.ts  Instructions for Gemini             <- rewrite for your problem
-  agent/runAgent.ts      The agent loop (max 5 rounds)
-  agent/defineTool.ts    Turns Zod schemas into Gemini tool declarations
-  supabase.ts            Server-side Supabase client
-  schemas.ts             Shared Zod schemas
-proxy.ts                 Passcode gate for every page and API
-seed/                    SQL seed data for each problem statement
+├── app/
+│   ├── activity/page.tsx        # Activity audit log
+│   ├── api/
+│   │   ├── agent/route.ts       # POST /api/agent (Gemini agent runner)
+│   │   ├── deliveries/route.ts  # GET /api/deliveries (filtered orders)
+│   │   ├── health/route.ts      # GET /api/health (environment check)
+│   │   ├── login/route.ts       # POST /api/login (passcode auth)
+│   │   ├── logout/route.ts      # POST /api/logout (session clear)
+│   │   ├── riders/route.ts      # GET /api/riders (fleet & load)
+│   │   └── stats/route.ts       # GET /api/stats (dashboard KPIs)
+│   ├── dashboard/page.tsx       # Operations dashboard
+│   ├── deliveries/page.tsx      # Deliveries table view
+│   ├── dispatch/page.tsx        # AI dispatch console
+│   ├── login/page.tsx           # Authentication screen
+│   ├── riders/page.tsx          # Riders fleet view
+│   ├── layout.tsx               # Root layout
+│   └── page.tsx                 # Redirect to /dashboard
+├── components/
+│   ├── dashboard/               # KpiCard, DispatchOverview
+│   ├── deliveries/              # DeliveriesTable, StatusBadge
+│   ├── dispatch/                # DispatchChat, ToolActivityPanel
+│   ├── layout/                  # AppShell, Sidebar, TopNav
+│   └── riders/                  # RidersTable, CapacityBar
+├── docs/                        # Architecture, database & agent design docs
+├── lib/
+│   ├── agent/                   # runAgent.ts, tools.ts, defineTool.ts, systemPrompt.ts
+│   ├── auth.ts                  # SHA-256 session management
+│   ├── dates.ts                 # IST date utilities
+│   ├── env.ts                   # Server-side environment reader
+│   ├── gemini.ts                # Singleton GoogleGenAI client
+│   ├── schemas.ts               # Shared Zod schemas & types
+│   ├── supabase.ts              # Server-side Supabase admin client
+│   └── utils.ts                 # Classname combiner
+├── seed/
+│   └── ps7_delivery_dispatch.sql # Complete PostgreSQL schema, functions & seed
+├── middleware.ts                # Session authentication gate
+├── package.json                 # Dependencies and build scripts
+└── README.md                    # This file
 ```
 
-## How to add a tool (the main hackathon work)
+---
 
-Open `lib/agent/tools.ts` and copy this pattern:
+## Setup & Running Locally
 
-```ts
-const createReturnRequest = defineTool({
-  name: "createReturnRequest",
-  description: "Use this when the customer wants to return a product from a delivered order.",
-  writes: true,
-  schema: z.object({
-    order_id: z.number().int().describe("The order number, for example 1007"),
-    product_id: z.string().describe("The product id, for example P101"),
-    reason: z.string().min(3).describe("Why the customer is returning it"),
-  }),
-  run: async ({ order_id, product_id, reason }) => {
-    // 1. Check your business rule (for example the return window)
-    // 2. Read or write Supabase
-    // 3. Return a small, clean object, or throw new Error("clear message")
-  },
-});
+### 1. Prerequisites
+- Node.js 20 or later
+- npm or pnpm
+- Supabase account ([supabase.com](https://supabase.com))
+- Google AI Studio API key ([aistudio.google.com](https://aistudio.google.com))
 
-export const tools: AgentTool[] = [createReturnRequest /*, more tools */];
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-Good tools:
+### 3. Database Setup
+1. Open your Supabase project dashboard -> **SQL Editor**.
+2. Open [seed/ps7_delivery_dispatch.sql](seed/ps7_delivery_dispatch.sql).
+3. Copy the entire file and execute it in the SQL Editor.
+4. This creates tables (`zones`, `riders`, `rider_shifts`, `deliveries`, `delivery_attempts`), stored procedures (`assign_delivery`, `reschedule_delivery`), RLS policies, and seed data.
 
-- Have a description that starts with "Use this when..."
-- Describe every field and its format, for example "YYYY-MM-DD"
-- Check business rules in code, not only in the prompt
-- Return small objects that Gemini can read easily
-- Throw clear errors, which the agent then explains to the user
+### 4. Configure Environment Variables
+Create `.env.local` in the project root:
+```env
+# Google AI Studio Gemini API Key
+GEMINI_API_KEY=your_gemini_api_key
 
-Then rewrite `lib/agent/systemPrompt.ts`. Name the business user, the logged-in user id (for example `C001`), your business rules and when to use each tool.
+# Gemini model (default: gemini-2.5-flash)
+GEMINI_MODEL=gemini-2.5-flash
 
-## Rules to remember
+# Supabase Project URL
+SUPABASE_URL=https://your-project.supabase.co
 
-- Never commit `.env.local`. It is already in `.gitignore`.
-- Never use `SUPABASE_SECRET_KEY` in frontend code. Only files under `lib/` and `app/api/` may use it.
-- Do not change the core stack.
-- Before you push, run `npm run build`. If it fails on your laptop, it will fail on Vercel too.
+# Supabase Service Role Secret Key (Server-only)
+SUPABASE_SECRET_KEY=your_supabase_service_role_key
 
-## Seed files
+# Team Passcode for dashboard login
+APP_PASSCODE=your_team_passcode
+```
 
-| File | Problem |
-| --- | --- |
-| `00_starter_example.sql` | Example `tasks` table (run first) |
-| `demo_eventease.sql` | Day 1 lab: EventEase campus events |
-| `ps1_ecommerce_support.sql` | PS1 E-commerce Customer Support Agent |
-| `ps2_inventory_restock.sql` | PS2 Inventory Restock Agent |
-| `ps3_clinic_appointments.sql` | PS3 Clinic Appointment Agent |
-| `ps4_it_helpdesk.sql` | PS4 IT Helpdesk Ticket Agent |
-| `ps5_expense_claims.sql` | PS5 Expense Claim Assistant |
-| `ps6_job_match.sql` | PS6 Job Match Agent |
+### 5. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser. Enter your `APP_PASSCODE` to access RouteWise.
 
-All dates in the seed data are relative to today, so the data is always fresh. All names, companies and records are made up. You can run a seed file again at any time to reset your data.
+### 6. Production Build
+```bash
+npm run build
+npm start
+```
+
+---
+
+## Verification Test Scenarios
+
+Try these exact prompts in `/dispatch` to verify all agent workflows:
+
+| Test | Prompt | Verified Agent Behavior |
+|---|---|---|
+| **TEST 1** | *"Which riders have free capacity today?"* | Calls `getAvailableRiders`, checks workload against capacity, displays table of available riders. |
+| **TEST 2** | *"Assign all pending Velachery deliveries for this evening."* | Calls `getPendingDeliveries` -> `getAvailableRiders` -> `assignDelivery` sequentially. Fills capacity and reports remaining pending orders. |
+| **TEST 3** | *"Show me all failed deliveries."* | Calls `getFailedDeliveries`, displays failed parcels with attempt history. |
+| **TEST 4** | *"Reschedule yesterday's failed deliveries to tomorrow morning."* | Calls `getFailedDeliveries` -> `rescheduleDelivery`. Reschedules orders under 3 attempts; warns about orders exceeding 3 attempts. |
+| **TEST 5** | *"Assign a delivery to a rider from another zone."* | Calls `assignDelivery`. Database function rejects cross-zone assignment; agent explains zone mismatch. |
+| **TEST 6** | *"Assign more deliveries than a rider's capacity."* | Calls `assignDelivery`. Database function rejects when rider load = max capacity; agent explains capacity limit. |
+| **TEST 7** | *"Assign the deliveries."* | Agent detects ambiguous request; asks for specific zone, date, or order reference before executing tools. |
