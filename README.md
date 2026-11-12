@@ -11,7 +11,7 @@ An autonomous logistics dispatch assistant designed for Anitha V (Dispatcher ID:
 | Team Member | Registration Number | Role | Responsibilities |
 |---|---|---|---|
 | Sigeni Tejas | RA2411003011282 | Team Lead & Database Integration | Project architecture, GitHub repository management, Supabase integration, database design, system integration, testing and Vercel deployment. |
-| Saket Badie | RA2411003011271 | Frontend Developer | Next.js UI, dashboard development, responsive design, delivery management interface, rider management and AI chat interface. |
+| Saket Bedia | RA2411003011271 | Frontend Developer | Next.js UI, dashboard development, responsive design, delivery management interface, rider management and AI chat interface. |
 | Pranav J | RA2411003011292 | Backend & API Developer | Next.js API routes, backend architecture, request handling, Zod validation, API integration and error handling. |
 | Anil | RA2411003011098 | AI Agent Engineer | Gemini API integration, function calling, agent execution loop, tool definitions, system instructions and autonomous dispatch workflows. |
 
