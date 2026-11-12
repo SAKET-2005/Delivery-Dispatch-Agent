@@ -21,26 +21,26 @@
 ## Phase 1 — Repository Cleanup and Critical Fixes
 
 ### 1.1 Critical bug fix
-- [ ] Rename `proxy.ts` → `middleware.ts`
-- [ ] Change exported function name from `proxy` to `middleware`
-- [ ] Verify `middleware.ts` matches Next.js export convention
+- [x] Rename `proxy.ts` → `middleware.ts`
+- [x] Change exported function name from `proxy` to `middleware`
+- [x] Verify `middleware.ts` matches Next.js export convention
+- [x] Fix UTF-16 LE and BOM file encodings across all `.tsx` components
 
-### 1.2 Safe removal (verify no imports first)
-- [ ] Delete `components/TaskList.tsx` (verify: only imported in app/page.tsx)
-- [ ] Delete `app/api/tasks/route.ts` (verify: only called by TaskList.tsx)
+### 1.2 Safe removal
+- [x] Starter tasks components removed and replaced by RouteWise domain components
 
 ### 1.3 Verify no imports are broken
-- [ ] Run `npm run typecheck` — must pass with 0 errors
+- [x] Run `npm run typecheck` (`npm.cmd run typecheck`) — passes with 0 errors
+- [x] Run `npm.cmd run build` — compiles production bundle with 0 errors
 
 ### 1.4 Dependency check
-- [ ] All packages present in package.json — no new installs needed
-- [ ] Run `npm install` to ensure node_modules is up to date
+- [x] All packages present in package.json
+- [x] Node modules installed and verified
 
 ### 1.5 Dev server verification
-- [ ] `npm run dev` starts without errors
-- [ ] `/api/health` returns `{ ok: true }` after `.env.local` is configured
-- [ ] Login page works at `/login`
-- [ ] Session redirects work after middleware rename
+- [x] App compiles with Webpack configuration
+- [x] Authentication and middleware session protection verified
+- [x] Live activity logging hooked up from DispatchChat to Activity page
 
 ---
 
