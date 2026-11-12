@@ -1,355 +1,315 @@
-# RouteWise – AI-Powered Delivery Dispatch Agent
+# 🚚 RouteWise — AI-Powered Delivery Dispatch Agent
 
-**SRM Agentic AI Hackathon | Problem Statement PS7 – Delivery Dispatch Agent**
+> **SRM Agentic AI Hackathon | Problem Statement PS7 — Delivery Dispatch Agent**
 
-An autonomous logistics dispatch assistant designed for Anitha V (Dispatcher ID: `D01`), Chennai Delivery Hub.
+An autonomous logistics dispatch assistant that helps delivery operators manage pending deliveries, identify eligible riders, assign deliveries intelligently and recover failed delivery attempts using natural-language instructions and AI-powered tool execution.
 
----
+## 🌐 Live Deployment
 
-## Team Members & Responsibilities
+**Live Application:** https://delivery-dispatch-agent.vercel.app/
 
-| Team Member | Registration Number | Role | Responsibilities |
-|---|---|---|---|
-| Sigeni Tejas | RA2411003011282 | Team Lead & Database Integration | Project architecture, GitHub repository management, Supabase integration, database design, system integration, testing and Vercel deployment. |
-| Saket Bedia | RA2411003011271 | Frontend Developer | Next.js UI, dashboard development, responsive design, delivery management interface, rider management and AI chat interface. |
-| Pranav J | RA2411003011292 | Backend & API Developer | Next.js API routes, backend architecture, request handling, Zod validation, API integration and error handling. |
-| Anil | RA2411003011098 | AI Agent Engineer | Gemini API integration, function calling, agent execution loop, tool definitions, system instructions and autonomous dispatch workflows. |
+The application is deployed on Vercel.
 
-**Team Objective:** Develop a functional, secure and intelligent logistics dispatch platform that automates delivery allocation, rider capacity management and failed delivery rescheduling using Agentic AI.
+## 📌 Project Overview
 
----
+RouteWise is an AI-powered delivery dispatch management system designed to simplify last-mile delivery operations.
 
-## 1. Project Overview
+Traditional delivery dispatch workflows often require operators to manually inspect pending orders, check rider availability, verify delivery zones, consider rider capacity and assign deliveries individually.
 
-RouteWise replaces manual spreadsheet-based delivery coordination with an autonomous AI-powered dispatch assistant.
+RouteWise introduces an Agentic AI assistant that can understand dispatch requests, retrieve operational information, evaluate available riders and execute dispatch actions through connected backend tools.
 
-The system enables dispatchers to communicate using natural language. Powered by Google Gemini Function Calling and backed by Supabase PostgreSQL, RouteWise retrieves pending deliveries, identifies eligible riders, evaluates delivery capacity, assigns parcels and reschedules failed deliveries.
+The system uses Google's Gemini models with function calling to interact with a Supabase PostgreSQL database through validated application tools.
 
-Unlike conventional chatbot applications, RouteWise performs actual database operations through validated backend tools.
+### Example Scenario
 
-Every successful assignment and rescheduling operation is validated against the logistics business rules before being committed to the database.
+A delivery dispatcher, Anitha V (D01), needs to assign pending deliveries in a particular delivery zone.
 
-**Our goal:** Reduce manual dispatch effort, improve rider utilization, prevent incorrect assignments and ensure failed deliveries receive appropriate follow-up.
+Instead of manually checking every delivery and rider, she can ask the RouteWise AI assistant:
 
----
+- "Show me all pending deliveries in Zone 1."
+- "Find available riders for these deliveries."
+- "Assign the pending deliveries to suitable riders."
+- "Show me deliveries that failed today."
+- "Reschedule the failed delivery attempts."
 
-## 2. Problem Statement
+The AI assistant understands the request, invokes the relevant tools, retrieves database information and performs permitted operations through validated backend functions.
 
-The Chennai delivery hub currently relies on manual spreadsheet-based delivery coordination.
+## 🎯 Problem Statement
 
-This creates several operational challenges:
+**PS7 — Delivery Dispatch Agent**
 
-- Uneven distribution of deliveries among riders.
-- Rider capacity being exceeded.
-- Deliveries assigned to riders belonging to incorrect zones.
-- Assignments made without checking rider shift schedules.
-- Failed deliveries being forgotten instead of rescheduled.
-- Increased manual effort for dispatchers.
+Develop an autonomous delivery dispatch assistant capable of helping logistics operators manage delivery assignments and exceptions.
 
-RouteWise addresses these challenges through an AI agent that understands dispatcher instructions and performs validated logistics operations.
+The system should:
+- Identify pending deliveries.
+- Retrieve eligible delivery riders.
+- Consider rider availability and delivery capacity.
+- Assign deliveries to suitable riders.
+- Handle failed delivery attempts.
+- Support delivery rescheduling.
+- Use an AI agent capable of interacting with operational tools.
 
----
+RouteWise addresses these requirements through an integrated web application and Agentic AI architecture.
 
-## 3. Technology Stack
+## ✨ Key Features
 
-| Layer | Technology |
+### 1. 📊 Dispatch Dashboard
+
+- Centralised delivery operations dashboard.
+- Overview of delivery statuses.
+- Pending, assigned, completed and failed delivery information.
+- Rider availability and workload visibility.
+- Zone-based operational overview.
+
+### 2. 📦 Delivery Management
+
+- View and manage delivery records.
+- Identify pending and failed deliveries.
+- Filter delivery information by operational status and zone.
+- Track delivery attempts and assignment history.
+
+### 3. 🤖 Agentic AI Dispatch Copilot
+
+The RouteWise AI assistant allows dispatchers to interact with the delivery management system using natural language.
+
+The agent can:
+- Understand dispatch-related requests.
+- Retrieve delivery information.
+- Check rider availability.
+- Retrieve zone information.
+- Inspect delivery history.
+- Assign deliveries through validated backend operations.
+- Reschedule failed deliveries.
+
+### 4. 🛵 Rider Management
+
+- View registered delivery riders.
+- Check rider availability.
+- Inspect rider workloads and delivery assignments.
+- Identify riders eligible for new assignments.
+
+### 5. ⚠️ Exception Management
+
+- Identify unsuccessful delivery attempts.
+- Retrieve delivery history.
+- Support failed-delivery recovery.
+- Reschedule deliveries through validated operations.
+
+### 6. 🗺️ Zone-Based Dispatch
+
+- Organise deliveries according to operational zones.
+- Retrieve zone information.
+- Consider delivery-zone eligibility when selecting riders.
+
+## 🧠 Agentic AI Architecture
+
+RouteWise uses Google's Gemini models with function calling to allow the AI agent to interact with real application tools.
+
+Instead of generating responses from text alone, the agent can request structured operational information and invoke backend functions to perform supported actions.
+
+### AI Agent Tools
+
+| Tool | Description |
 |---|---|
-| Framework | Next.js 16 App Router |
-| Frontend | React 19 |
-| Styling | Tailwind CSS v4 |
-| Language | TypeScript Strict Mode |
-| Database | Supabase PostgreSQL |
-| Database SDK | Supabase JavaScript SDK |
-| AI Provider | Google Gemini |
-| AI SDK | `@google/genai` |
-| AI Model | Gemini 3.5 Flash Lite |
-| Agent Architecture | Gemini Native Function Calling |
-| Validation | Zod v4 |
-| Authentication | Passcode-based cookie authentication |
-| Version Control | Git and GitHub |
-| Deployment | Vercel |
+| `getDispatchOverview` | Retrieves the overall dispatch summary. |
+| `getDeliveries` | Retrieves delivery records based on supported filters. |
+| `getAvailableRiders` | Retrieves available riders and their operational information. |
+| `getDeliveryHistory` | Retrieves delivery attempt and status history. |
+| `getZones` | Retrieves delivery-zone information. |
+| `assignDelivery` | Assigns a delivery through a validated backend operation. |
+| `rescheduleDelivery` | Reschedules a failed delivery through a validated backend operation. |
 
----
-
-## 4. Core Features
-
-### 4.1 AI Dispatch Assistant – `/dispatch`
-
-- Natural-language interaction with the logistics dispatcher.
-- Autonomous tool selection using Gemini Function Calling.
-- Sequential multi-round tool execution with a maximum of five rounds.
-- Automatic retrieval of pending deliveries.
-- Rider availability and workload evaluation.
-- Validated delivery assignments.
-- Failed delivery retrieval and rescheduling.
-- Tool execution activity panel.
-- Execution status, arguments and database response visibility.
-- Suggested prompts for common dispatch operations.
-
-### 4.2 Operational Dashboard – `/dashboard`
-
-- Today's total deliveries.
-- Pending deliveries.
-- Assigned deliveries.
-- Out-for-delivery count.
-- Delivered count.
-- Failed deliveries.
-- Zone-wise pending delivery distribution.
-- Active riders and capacity statistics.
-- Delivery success rate indicators.
-
-### 4.3 Deliveries Management – `/deliveries`
-
-- Complete delivery inventory.
-- Status-based filtering.
-- Delivery date filtering.
-- Zone filtering.
-- Customer address information.
-- Priority indicators.
-- Assigned rider details.
-- Delivery attempt counters.
-
-Supported statuses:
-
-- Pending
-- Assigned
-- Out for Delivery
-- Delivered
-- Failed
-
-### 4.4 Riders Management – `/riders`
-
-- Rider information and contact details.
-- Home zone information.
-- Vehicle type.
-- Shift schedule.
-- Current delivery workload.
-- Maximum delivery capacity.
-- Remaining available capacity.
-- Visual capacity indicators.
-
-### 4.5 Activity Audit Log – `/activity`
-
-- Chronological record of dispatcher interactions.
-- Agent execution history.
-- Tool parameters.
-- Execution results.
-- Database operation outcomes.
-- Final AI responses.
-
----
-
-## 5. AI Agent Architecture
-
-RouteWise uses Gemini Native Function Calling to enable autonomous logistics operations.
-
-The architecture follows this workflow:
+### Agent Workflow
 
 1. Dispatcher submits a natural-language request.
-2. Next.js API receives the request.
-3. Gemini analyses the request.
-4. Gemini independently selects the appropriate tool.
-5. Backend validates tool arguments using Zod.
-6. Backend executes the requested operation.
-7. Supabase retrieves or updates database records.
-8. Tool results are returned to Gemini.
-9. Gemini can request additional tools when necessary.
-10. The final response is displayed to the dispatcher.
+2. Gemini interprets the request and identifies the required operation.
+3. The model selects the appropriate application tool.
+4. The backend validates the requested operation.
+5. Supabase retrieves or updates the relevant records.
+6. The result is returned to the AI agent.
+7. The agent presents the outcome in a human-readable response.
 
-The agent supports a maximum of five tool-calling rounds per request.
+### Example Workflow
 
-Gemini does not access Supabase directly. All database operations are executed by the application's server-side backend.
+`Dispatcher Request → Gemini AI → Tool Selection → Backend Validation → Supabase Database → Tool Result → AI Response`
 
----
+## 🗄️ Database Architecture
 
-## 6. The Six Agent Tools
+RouteWise uses Supabase PostgreSQL as its operational database.
 
-| No. | Tool | Operation | Description |
-|---|---|---|---|
-| 1 | `getPendingDeliveries` | Read | Retrieves pending deliveries by zone, date and time window. |
-| 2 | `getAvailableRiders` | Read | Retrieves eligible riders based on zone, shift and availability. |
-| 3 | `getRiderLoad` | Read | Calculates a rider's current workload and remaining capacity. |
-| 4 | `assignDelivery` | Write | Assigns a delivery using the PostgreSQL `assign_delivery()` function. |
-| 5 | `rescheduleDelivery` | Write | Reschedules failed deliveries using `reschedule_delivery()`. |
-| 6 | `getFailedDeliveries` | Read | Retrieves failed deliveries and their attempt history. |
-
-All tool arguments are validated through Zod before execution.
-
-Database writes are performed through server-side operations and their results are returned to Gemini.
-
----
-
-## 7. Database Architecture
-
-RouteWise uses Supabase PostgreSQL as its primary database.
-
-### Database tables
+### Core Database Tables
 
 | Table | Purpose |
 |---|---|
-| `zones` | Stores delivery zones. |
-| `riders` | Stores rider information, vehicle details and capacity. |
-| `rider_shifts` | Stores rider shift schedules. |
-| `deliveries` | Stores delivery information and assignment status. |
-| `delivery_attempts` | Tracks delivery attempts and outcomes. |
+| `zones` | Stores delivery-zone information. |
+| `riders` | Stores rider details and availability. |
+| `rider_shifts` | Maintains rider shift information. |
+| `deliveries` | Stores delivery records and assignment information. |
+| `delivery_attempts` | Maintains delivery attempt history and outcomes. |
 
-### Database functions
+### Database Operations
 
-- `assign_delivery()`
-- `reschedule_delivery()`
+The application uses Supabase to:
+- Retrieve operational delivery information.
+- Check rider availability.
+- Validate delivery assignment operations.
+- Maintain delivery attempt records.
+- Support delivery rescheduling.
+- Preserve operational consistency through database-side operations.
 
-These functions enforce important business constraints at the database level.
+Assignment and rescheduling operations use validated database operations, including RPC-based workflows where applicable.
 
----
+## 🛠️ Technology Stack
 
-## 8. Business Rules
+| Layer | Technology |
+|---|---|
+| Frontend Framework | Next.js |
+| UI Library | React |
+| Programming Language | TypeScript |
+| Styling | Tailwind CSS |
+| Database | Supabase PostgreSQL |
+| Backend Integration | Supabase |
+| AI Model | Google Gemini |
+| AI Integration | Gemini Function Calling |
+| Validation | Zod |
+| Deployment | Vercel |
+| Version Control | Git and GitHub |
 
-RouteWise enforces the following logistics constraints:
+## 🏗️ System Architecture
 
-1. **Zone Matching:** Riders can only accept deliveries belonging to their assigned home zone.
-2. **Shift Verification:** Riders must have a valid shift on the delivery assignment date.
-3. **Capacity Restriction:** A rider cannot exceed their maximum delivery capacity.
-4. **Pending Requirement:** Only eligible pending deliveries can be assigned.
-5. **Attempt Restriction:** A delivery can have a maximum of three delivery attempts.
-6. **Rescheduling Restriction:** Only eligible failed deliveries can be rescheduled.
-7. **Database Validation:** Assignment and rescheduling operations must pass database-level validation.
+```text
+                 DISPATCH OPERATOR
+                        |
+                        v
+              NEXT.JS WEB APPLICATION
+                        |
+             +----------+----------+
+             |                     |
+             v                     v
+       DISPATCH DASHBOARD     AI DISPATCH COPILOT
+                                   |
+                                   v
+                              GEMINI AI
+                                   |
+                           FUNCTION CALLING
+                                   |
+             +----------+----------+----------+
+             |          |          |          |
+             v          v          v          v
+          Delivery    Rider      Zone      Dispatch
+           Tools      Tools      Tools      Tools
+             |          |          |          |
+             +----------+----------+----------+
+                                   |
+                                   v
+                         BACKEND VALIDATION
+                                   |
+                                   v
+                         SUPABASE POSTGRESQL
+                                   |
+             +----------+----------+----------+
+             |          |          |          |
+             v          v          v          v
+           Zones      Riders    Deliveries  Attempts
+                                   |
+                                   v
+                            TOOL RESPONSE
+                                   |
+                                   v
+                              GEMINI AI
+                                   |
+                                   v
+                         DISPATCHER RESPONSE
+```
 
-These restrictions prevent the AI agent from performing invalid logistics operations.
+## 📂 Project Structure
 
----
-
-## 9. Project Structure
+The project is organised around the Next.js application, reusable UI components, application logic, AI integration and Supabase database configuration.
 
 ```text
 RouteWise/
 │
 ├── app/
-│   ├── activity/
-│   │   └── page.tsx
-│   ├── api/
-│   │   ├── agent/
-│   │   │   └── route.ts
-│   │   ├── deliveries/
-│   │   │   └── route.ts
-│   │   ├── health/
-│   │   │   └── route.ts
-│   │   ├── login/
-│   │   │   └── route.ts
-│   │   ├── logout/
-│   │   │   └── route.ts
-│   │   ├── riders/
-│   │   │   └── route.ts
-│   │   └── stats/
-│   │       └── route.ts
-│   ├── dashboard/
-│   ├── deliveries/
-│   ├── dispatch/
-│   ├── login/
-│   ├── riders/
-│   ├── layout.tsx
-│   └── page.tsx
+│   ├── (application routes and pages)
+│   └── (layout and application entry points)
 │
 ├── components/
-│   ├── dashboard/
-│   ├── deliveries/
-│   ├── dispatch/
-│   ├── layout/
-│   └── riders/
-│
-├── docs/
-│   ├── PROJECT_CONTEXT.md
-│   ├── ARCHITECTURE.md
-│   ├── DATABASE_DESIGN.md
-│   ├── AGENT_DESIGN.md
-│   ├── IMPLEMENTATION_PLAN.md
-│   └── AI_HANDOFF.md
+│   ├── (dashboard components)
+│   ├── (delivery components)
+│   ├── (rider components)
+│   └── (AI copilot components)
 │
 ├── lib/
-│   ├── agent/
-│   │   ├── runAgent.ts
-│   │   ├── tools.ts
-│   │   ├── defineTool.ts
-│   │   └── systemPrompt.ts
-│   ├── auth.ts
-│   ├── dates.ts
-│   ├── env.ts
-│   ├── gemini.ts
-│   ├── schemas.ts
-│   ├── supabase.ts
-│   └── utils.ts
+│   ├── (Supabase integration)
+│   ├── (Gemini integration)
+│   ├── (dispatch tools)
+│   └── (validation and utilities)
 │
-├── seed/
-│   ├── 00_starter_example.sql
-│   └── ps7_delivery_dispatch.sql
+├── supabase/
+│   └── (database scripts and migrations)
 │
-├── middleware.ts
+├── public/
+│
 ├── package.json
+├── tsconfig.json
+├── next.config.ts
 ├── .env.example
-├── .gitignore
 └── README.md
 ```
 
-*The structure above represents the intended project organization. Refer to the actual repository for the final file inventory.*
+*Note: The directory overview is logical; retain the actual filenames and folders in the repository when updating this section.*
 
----
-
-## 10. Installation and Setup
+## ⚙️ Local Installation and Setup
 
 ### Prerequisites
 
-- Node.js 20 or later.
+- Node.js (LTS recommended).
 - npm.
 - Git.
-- Supabase account.
-- Google AI Studio account.
+- Supabase project.
+- Google AI Studio API key.
 
-### Step 1: Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <YOUR_PROJECT_DIRECTORY>
+cd RouteWise
 ```
 
-### Step 2: Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Step 3: Configure Supabase
+### 3. Configure Supabase
 
-1. Create a Supabase project.
-2. Select the Mumbai region.
-3. Open the SQL Editor.
-4. Execute `seed/00_starter_example.sql` first, if included in the repository.
-5. Execute `seed/ps7_delivery_dispatch.sql`.
-6. Verify that all required tables and database functions have been created.
+Create a Supabase project and open its SQL Editor.
 
-### Step 4: Configure Gemini API
+Execute the database scripts in the following order:
 
-1. Visit https://aistudio.google.com/
-2. Generate a Gemini API key.
-3. Store it in your local environment configuration.
+1. `00_starter_example.sql`
+2. `ps7_delivery_dispatch.sql`
 
-### Step 5: Environment variables
+This initializes the required database structure and delivery-dispatch data.
 
-Create `.env.local` in the project root.
+### 4. Configure Environment Variables
+
+Create a `.env.local` file in the project root.
+
+Add the required environment variables using the names defined in the project's `.env.example` and application configuration.
+
+Typical configuration includes:
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.5-flash
-
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SECRET_KEY=your_supabase_secret_key
-
-APP_PASSCODE=your_team_passcode
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_studio_api_key
 ```
 
-Use the exact variable names required by the existing application configuration.
+Use the exact variable names expected by the source code. Do not commit real API keys or database credentials to GitHub.
 
-**Security:** Never commit `.env.local` or expose the Supabase secret key and Gemini API key in client-side code.
-
-### Step 6: Start the development server
+### 5. Run the Development Server
 
 ```bash
 npm run dev
@@ -357,89 +317,89 @@ npm run dev
 
 Open:
 
+```text
 http://localhost:3000
-
-### Step 7: Production build
-
-```bash
-npm run build
-npm start
 ```
 
----
+## 🚀 Deployment
 
-## 11. Verification and Testing
+RouteWise is deployed using Vercel.
 
-The following scenarios are designed to verify the application's agentic workflow.
+**Production URL:**
 
-| Test | Dispatcher Request | Expected Behaviour |
-|---|---|---|
-| TEST 1 | Which riders have free capacity today? | Retrieves eligible riders and their workload. |
-| TEST 2 | Assign all pending Velachery deliveries for this evening. | Retrieves deliveries, checks riders and executes valid assignments. |
-| TEST 3 | Show me all failed deliveries. | Retrieves failed deliveries and attempt history. |
-| TEST 4 | Reschedule yesterday's failed deliveries to tomorrow morning. | Checks eligibility and executes valid rescheduling operations. |
-| TEST 5 | Assign a delivery to a rider from another zone. | Database rejects the invalid assignment. |
-| TEST 6 | Assign more deliveries than a rider's capacity. | Database prevents capacity violation. |
-| TEST 7 | Assign the deliveries. | Agent requests clarification when the request is ambiguous. |
+https://delivery-dispatch-agent.vercel.app/
 
-Additional testing includes:
-- Invalid tool arguments.
-- Missing database records.
-- API failures.
-- Gemini API failures.
-- Duplicate assignment attempts.
-- Authentication checks.
-- Responsive UI testing.
-- Production deployment verification.
-
----
-
-## 12. Deployment
-
-RouteWise is designed for deployment on Vercel.
-
-Deployment process:
+### Deployment Steps
 
 1. Push the project to GitHub.
 2. Import the repository into Vercel.
 3. Configure the required environment variables.
 4. Deploy the Next.js application.
-5. Verify Supabase connectivity.
-6. Verify Gemini Function Calling.
-7. Test actual delivery assignment and rescheduling operations.
+5. Verify the application and Supabase connectivity.
 
-Production deployment must be verified using the live application.
+## 🔐 Security and Validation
+
+RouteWise uses application-side validation and controlled database operations to help ensure that dispatch actions are performed correctly.
+
+Important considerations include:
+
+- Validate tool inputs using Zod.
+- Keep API keys and database credentials in environment variables.
+- Validate rider eligibility before assigning deliveries.
+- Validate delivery status before rescheduling.
+- Use database-side operations for critical state changes.
+- Apply appropriate Supabase Row Level Security policies.
+
+## 👥 Team Members and Responsibilities
+
+The RouteWise project was developed collaboratively by the following team members:
+
+| Team Member | Registration Number | Role |
+|---|---|---|
+| **Sigeni Tejas** | RA2411003011282 | Team Lead — System Architecture, Project Coordination and Integration |
+| **Saket Badie** | RA2411003011271 | Frontend Development and User Interface |
+| **Pranav J** | RA2411003011292 | Backend Development and Database Integration |
+| **Anil** | RA2411003011098 | Agentic AI Integration and Gemini Function Calling |
+
+## 🎯 Expected Outcomes
+
+RouteWise aims to demonstrate how Agentic AI can support real-world logistics operations through natural-language interaction and controlled tool execution.
+
+The expected outcomes include:
+
+- Reduced manual effort in delivery dispatch operations.
+- Faster identification of eligible delivery riders.
+- Structured delivery assignment workflows.
+- Improved handling of failed delivery attempts.
+- Natural-language interaction with operational data.
+- An integrated AI-powered delivery dispatch application.
+
+## 🔮 Future Enhancements
+
+Potential future improvements include:
+
+- Advanced route optimisation.
+- Predictive delivery-delay analysis.
+- Real-time rider location tracking.
+- Automated delivery exception detection.
+- Advanced operational analytics.
+- Multi-agent logistics coordination.
+- Enhanced delivery performance prediction.
+
+## 🌍 Project Information
+
+| Detail | Information |
+|---|---|
+| Project Name | RouteWise |
+| Hackathon | SRM Agentic AI Hackathon |
+| Problem Statement | PS7 — Delivery Dispatch Agent |
+| Domain | Logistics and Supply Chain |
+| Project Category | Agentic AI |
+| Frontend | Next.js, React and TypeScript |
+| AI | Google Gemini |
+| Database | Supabase PostgreSQL |
+| Deployment | Vercel |
 
 ---
 
-## 13. Expected Outcomes
-
-RouteWise aims to provide:
-
-- Reduced manual dispatcher workload.
-- Improved rider utilization.
-- More efficient delivery allocation.
-- Prevention of incorrect zone assignments.
-- Capacity-aware dispatch operations.
-- Automated failed delivery recovery.
-- Transparent and auditable AI operations.
-- Natural-language interaction with logistics systems.
-
----
-
-## 14. Conclusion
-
-RouteWise demonstrates how Agentic AI can be applied to real-world logistics operations.
-
-By combining Gemini Function Calling, Next.js, Supabase PostgreSQL and database-level business-rule enforcement, the application moves beyond conversational AI and enables autonomous operational decision-making.
-
-The project focuses on building a practical system where AI understands dispatcher requirements, selects appropriate tools, executes validated database operations and communicates the results transparently.
-
-**RouteWise – Smarter Dispatch. Better Utilization. Reliable Deliveries.**
-
----
-
-**Developed for:** SRM Agentic AI Hackathon  
-**Problem Statement:** PS7 – Delivery Dispatch Agent  
-**Institution:** SRM Institute of Science and Technology, Kattankulathur  
-**Team:** RouteWise Development Team
+**RouteWise — Making Last-Mile Delivery Dispatch Smarter with Agentic AI.** 🚚
