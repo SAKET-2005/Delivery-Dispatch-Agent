@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { todayInIndia } from "@/lib/dates";
 
 export const runtime = "nodejs";
 
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
   }
 
   // For each rider, count active deliveries on the given date
-  const targetDate = date ?? new Date().toISOString().split("T")[0];
+  const targetDate = date ?? todayInIndia();
 
   const ridersWithLoad = await Promise.all(
     (riders ?? []).map(async (r: any) => {

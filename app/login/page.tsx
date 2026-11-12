@@ -1,64 +1,99 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, MapPinned } from "lucide-react";
 
 export default function LoginPage() {
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setError("");
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passcode }),
-    });
-    setLoading(false);
-    if (res.ok) {
-      window.location.href = "/dashboard";
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Login failed");
+    setBusy(true);
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Unable to sign in.");
+      router.replace("/dashboard");
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to sign in.");
+    } finally {
+      setBusy(false);
     }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4 bg-slate-50">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white text-3xl mb-4">
-            🚚
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900">RouteWise</h1>
-          <p className="mt-1 text-slate-500 font-medium">Chennai Delivery Hub</p>
+    <main className="auth-screen">
+      <section className="auth-art">
+        <div className="auth-logo">
+          <span className="brand-mark">
+            <MapPinned size={18} />
+          </span>
+          <span className="brand-title">
+            RouteWise<span className="brand-sub">Chennai delivery hub</span>
+          </span>
         </div>
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <div className="text-center mb-6">
-            <h2 className="text-lg font-semibold text-slate-900">Enter team passcode</h2>
-            <p className="mt-1 text-sm text-slate-500">This keeps your app and your Gemini quota safe.</p>
+        <div className="map-orbit">
+          <span className="orbit-dot" />
+          <span className="orbit-dot" />
+          <span className="orbit-dot" />
+        </div>
+        <div className="auth-art-copy">
+          <div className="eyebrow" style={{ color: "#49c2a3" }}>
+            Dispatch intelligence
           </div>
-          <input
-            type="password"
-            value={passcode}
-            onChange={(e) => setPasscode(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
-            placeholder="Passcode"
-            autoFocus
-            disabled={loading}
-          />
-          {error && <p className="mt-3 text-sm text-red-600 text-center">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading || !passcode}
-            className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            {loading ? "Checking..." : "Enter Dashboard"}
+          <h1>
+            Every route,
+            <br />
+            in good hands.
+          </h1>
+          <p>
+            Your Chennai delivery operation, in sync. See the fleet, move every parcel, and keep
+            the day on course.
+          </p>
+        </div>
+        <div className="auth-foot">CHENNAI · INDIA&nbsp;&nbsp; / &nbsp;&nbsp;ROUTEWISE OPERATIONS</div>
+      </section>
+
+      <section className="auth-form-side">
+        <form className="auth-form" onSubmit={submit}>
+          <div className="eyebrow">Chennai Delivery Hub</div>
+          <h2>Dispatcher sign in</h2>
+          <p>Enter your hub passcode to access operations.</p>
+          <div className="form-control">
+            <label htmlFor="passcode">Passcode</label>
+            <input
+              className="login-input"
+              id="passcode"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              placeholder="Enter your passcode"
+            />
+          </div>
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button className="btn btn-primary login-submit" type="submit" disabled={busy}>
+            {busy ? "Signing in…" : "Sign in to hub"}
+            <ArrowRight size={15} />
           </button>
+          <div className="login-note">Authorized dispatch personnel only</div>
         </form>
-      </div>
+      </section>
     </main>
   );
 }
