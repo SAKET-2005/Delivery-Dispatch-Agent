@@ -62,7 +62,7 @@ RouteWise addresses these challenges through an AI agent that understands dispat
 | Database SDK | Supabase JavaScript SDK |
 | AI Provider | Google Gemini |
 | AI SDK | `@google/genai` |
-| AI Model | Gemini 2.5 Flash |
+| AI Model | Gemini 3.5 Flash Lite |
 | Agent Architecture | Gemini Native Function Calling |
 | Validation | Zod v4 |
 | Authentication | Passcode-based cookie authentication |
