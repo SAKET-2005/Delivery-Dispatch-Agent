@@ -44,3 +44,48 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ deliveries });
 }
+
+export async function PATCH(request: Request) {
+  const body = await request.json().catch(() => null);
+  if (!body || !body.id || !body.status) {
+    return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
+  }
+
+  const { id, status, outcome, note } = body;
+  const supabase = getSupabase();
+
+  const { data: d, error: fetchErr } = await supabase
+    .from("deliveries")
+    .select("rider_id, attempts")
+    .eq("id", id)
+    .single();
+
+  if (fetchErr || !d) {
+    return NextResponse.json({ error: "Delivery not found" }, { status: 404 });
+  }
+
+  const updateData: Record<string, unknown> = { status };
+  if (status === "failed") {
+    updateData.attempts = Math.min(3, (d.attempts || 0) + 1);
+  }
+
+  const { error: updateErr } = await supabase
+    .from("deliveries")
+    .update(updateData)
+    .eq("id", id);
+
+  if (updateErr) {
+    return NextResponse.json({ error: updateErr.message }, { status: 500 });
+  }
+
+  if (d.rider_id && (status === "delivered" || status === "failed")) {
+    await supabase.from("delivery_attempts").insert({
+      delivery_id: id,
+      rider_id: d.rider_id,
+      outcome: outcome || (status === "delivered" ? "delivered" : "customer_not_home"),
+      note: note || (status === "delivered" ? "Handed to customer" : "Attempt failed"),
+    });
+  }
+
+  return NextResponse.json({ ok: true, status });
+}

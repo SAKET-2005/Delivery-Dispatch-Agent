@@ -60,6 +60,31 @@ export default function DeliveriesTable({ refreshKey, initialFilters }: Deliveri
     fetchDeliveries();
   }, [refreshKey, filters.status, filters.zone_id, filters.date]);
 
+  async function handleStatusUpdate(id: number, status: string) {
+    try {
+      const res = await fetch("/api/deliveries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status }),
+      });
+      if (res.ok) {
+        setDeliveries((prev) =>
+          prev.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  status,
+                  attempts: status === "failed" ? Math.min(3, item.attempts + 1) : item.attempts,
+                }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update delivery status:", err);
+    }
+  }
+
   const zoneNames: Record<string, string> = {
     Z1: "Velachery",
     Z2: "Adyar",
@@ -177,12 +202,13 @@ export default function DeliveriesTable({ refreshKey, initialFilters }: Deliveri
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Rider</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Attempts</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredDeliveries.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
+                <td colSpan={9} className="px-4 py-8 text-center text-slate-500">
                   No deliveries found.
                 </td>
               </tr>
@@ -197,6 +223,26 @@ export default function DeliveriesTable({ refreshKey, initialFilters }: Deliveri
                   <td className="px-4 py-3 text-sm text-slate-700">{d.rider_name || "—"}</td>
                   <td className="px-4 py-3 text-sm"><StatusBadge status={d.status} /></td>
                   <td className="px-4 py-3 text-sm text-slate-700">{d.attempts}/3</td>
+                  <td className="px-4 py-3 text-sm">
+                    {d.status === "assigned" || d.status === "out_for_delivery" ? (
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={() => handleStatusUpdate(d.id, "delivered")}
+                          className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                        >
+                          ✓ Delivered
+                        </button>
+                        <button
+                          onClick={() => handleStatusUpdate(d.id, "failed")}
+                          className="px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors"
+                        >
+                          ✕ Failed
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-slate-400 text-xs">—</span>
+                    )}
+                  </td>
                 </tr>
               ))
             )}

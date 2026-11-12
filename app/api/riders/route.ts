@@ -47,6 +47,19 @@ export async function GET(request: Request) {
         .in("status", ["assigned", "out_for_delivery"])
         .eq("delivery_date", targetDate);
 
+      // Daily COD summary for rider
+      const { data: codDeliveries } = await supabase
+        .from("deliveries")
+        .select("cod_amount")
+        .eq("rider_id", r.id)
+        .eq("is_cod", true)
+        .eq("delivery_date", targetDate);
+
+      const codTotal = (codDeliveries ?? []).reduce(
+        (sum: number, item: { cod_amount?: number }) => sum + (item.cod_amount || 0),
+        0
+      );
+
       if (countError) {
         return {
           ...r,
@@ -55,6 +68,7 @@ export async function GET(request: Request) {
           active_count: 0,
           remaining: r.capacity,
           has_shift_today: !!shift,
+          cod_total: codTotal,
         };
       }
 
@@ -66,6 +80,7 @@ export async function GET(request: Request) {
         active_count: active,
         remaining: r.capacity - active,
         has_shift_today: !!shift,
+        cod_total: codTotal,
       };
     })
   );

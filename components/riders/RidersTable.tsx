@@ -15,6 +15,7 @@ interface Rider {
   active_count: number;
   remaining: number;
   has_shift_today: boolean;
+  cod_total?: number;
 }
 
 interface RidersTableProps {
@@ -134,6 +135,7 @@ export default function RidersTable({ refreshKey }: RidersTableProps) {
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Vehicle</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Shift Today</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Load</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">COD Today</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
             </tr>
           </thead>
@@ -170,6 +172,9 @@ export default function RidersTable({ refreshKey }: RidersTableProps) {
                     ) : (
                       <span className="text-slate-400">—</span>
                     )}
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-slate-900">
+                    {r.cod_total ? `₹${r.cod_total.toLocaleString("en-IN")}` : <span className="text-slate-400">₹0</span>}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {r.has_shift_today && r.is_active ? (
