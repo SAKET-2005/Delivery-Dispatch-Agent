@@ -64,12 +64,12 @@ export default function DashboardPage() {
     <AppShell title="Dashboard">
       <main className="p-6 lg:p-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6 mb-8">
-          <KpiCard label="Total Today" value={stats.total} icon="??" />
-          <KpiCard label="Pending" value={stats.pending} highlight="warning" icon="?" />
-          <KpiCard label="Assigned" value={stats.assigned} highlight="normal" icon="??" />
-          <KpiCard label="Out for Delivery" value={stats.out_for_delivery} highlight="success" icon="??" />
-          <KpiCard label="Delivered" value={stats.delivered} highlight="success" icon="?" />
-          <KpiCard label="Failed" value={stats.failed} highlight="danger" icon="?" />
+          <KpiCard label="Total Today" value={stats.total} icon="📦" />
+          <KpiCard label="Pending" value={stats.pending} highlight="warning" icon="⏳" />
+          <KpiCard label="Assigned" value={stats.assigned} highlight="normal" icon="📋" />
+          <KpiCard label="Out for Delivery" value={stats.out_for_delivery} highlight="success" icon="🚚" />
+          <KpiCard label="Delivered" value={stats.delivered} highlight="success" icon="✅" />
+          <KpiCard label="Failed" value={stats.failed} highlight="danger" icon="❌" />
         </div>
         <DispatchOverview />
       </main>

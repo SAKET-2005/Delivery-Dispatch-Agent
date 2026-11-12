@@ -15,7 +15,7 @@ export default function ToolActivityPanel({ steps }: ToolActivityPanelProps) {
         <details key={i} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
           <summary className="cursor-pointer select-none flex items-center gap-2">
             <span className={s.ok ? "text-emerald-700" : "text-red-600"}>
-              {s.ok ? "?" : "?"}
+              {s.ok ? "✅" : "❌"}
             </span>
             <span className="font-mono font-medium">{s.tool}</span>
             {s.writes && <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-amber-800 text-[10px]">writes data</span>}

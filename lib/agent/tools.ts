@@ -172,6 +172,7 @@ const getFailedDeliveries = defineTool({
   name: "getFailedDeliveries",
   description: `Use this when the dispatcher asks about failed deliveries that need attention.
 Returns failed deliveries with their attempt count and history.
+Leave date empty unless the dispatcher explicitly asks for a specific date (e.g. 'today' or 'yesterday').
 Optionally filter by zone. Deliveries with 3 attempts cannot be rescheduled.`,
   schema: getFailedDeliveriesArgs,
   run: async ({ zone_id, date }) => {

@@ -30,9 +30,9 @@ const ZONE_NAMES: Record<string, string> = {
 };
 
 const VEHICLE_ICONS: Record<string, string> = {
-  bike: "???",
-  scooter: "??",
-  van: "??",
+  bike: "🚲",
+  scooter: "🛵",
+  van: "🚐",
 };
 
 export default function RidersTable({ refreshKey }: RidersTableProps) {

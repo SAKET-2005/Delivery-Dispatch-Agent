@@ -83,7 +83,7 @@ export default function ActivityPage() {
                         <div key={i} className="rounded border border-slate-200 bg-white p-2 font-mono text-[11px]">
                           <div className="flex items-center gap-2 mb-1">
                             <span className={s.ok ? "text-emerald-600" : "text-red-600"}>
-                              {s.ok ? "?" : "?"}
+                              {s.ok ? "✅" : "❌"}
                             </span>
                             <span className="font-medium">{s.tool}</span>
                             {s.writes && <span className="rounded bg-amber-100 px-1.5 py-0.5 text-amber-800 text-[10px]">writes</span>}
