@@ -24,7 +24,7 @@ export function TopNav({ title }: { title: string }) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-slate-900 text-xl font-semibold">{title}</h1>
-          <p className="text-slate-500 text-sm mt-0.5">{currentDate}</p>
+          <p className="text-slate-500 text-sm mt-0.5" suppressHydrationWarning>{currentDate}</p>
         </div>
         <button
           onClick={handleLogout}
